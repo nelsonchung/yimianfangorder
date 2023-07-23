@@ -4,7 +4,6 @@ class BossModeScreen extends StatefulWidget {
   const BossModeScreen({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _BossModeScreenState createState() => _BossModeScreenState();
 }
 
@@ -61,93 +60,109 @@ class _BossModeScreenState extends State<BossModeScreen> {
   // 用於計算收入
   // ...
 
+  // 當前選擇的菜單
+  Map<String, bool> selectedMenu = {}; // 使用Map記錄菜單的選擇狀態
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('老闆模式'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('老闆模式'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: '菜單'),
+              Tab(text: '日結'),
+              Tab(text: '月結'),
+            ],
+          ),
+        ),
+        body: TabBarView(
           children: [
-            // 座位分配圖
-            const Text(
-              '座位分配圖',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SeatCard(seatNumber: '1', capacity: 4),
-                SeatCard(seatNumber: '2', capacity: 2),
-                SeatCard(seatNumber: '3', capacity: 2),
-                SeatCard(seatNumber: '4', capacity: 2),
-              ],
-            ),
-            const SizedBox(height: 20),
-            // 菜單
-            const Text(
-              '菜單',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: menuCategories.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        menuCategories[index].title,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 8),
-                      Column(
-                        children: menuCategories[index].items.map((item) {
-                          return Card(
-                            child: ListTile(
-                              title: Text(item.name),
-                              leading: Image.asset(item.imagePath),
+            // 第一個Tab頁面，顯示菜單
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 座位分配圖
+                  const Text(
+                    '座位分配圖',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  // ... (之前的座位卡片部分相同)
+
+                  const SizedBox(height: 20),
+                  // 菜單
+                  const Text(
+                    '菜單',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: menuCategories.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              menuCategories[index].title,
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  );
-                },
+                            const SizedBox(height: 8),
+                            Column(
+                              children: menuCategories[index].items.map((item) {
+                                return SwitchListTile(
+                                  title: Text(item.name),
+                                  value: selectedMenu[item.name] ?? false,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedMenu[item.name] = value;
+                                    });
+                                  },
+                                  secondary: Image.asset(item.imagePath),
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  // 結帳按鈕
+                  ElevatedButton(
+                    onPressed: () {
+                      // 結帳按鈕的邏輯
+                      // ...
+                    },
+                    child: const Text('結帳'),
+                  ),
+                ],
               ),
             ),
-            // 結帳按鈕、日結按鈕和月結按鈕
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // 結帳按鈕的邏輯
-                    // ...
-                  },
-                  child: const Text('結帳'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // 日結按鈕的邏輯
-                    // ...
-                  },
-                  child: const Text('日結'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // 月結按鈕的邏輯
-                    // ...
-                  },
-                  child: const Text('月結'),
-                ),
-              ],
+            // 第二個Tab頁面，顯示日結功能
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // 日結按鈕的邏輯
+                  // ...
+                },
+                child: const Text('日結'),
+              ),
+            ),
+            // 第三個Tab頁面，顯示月結功能
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // 月結按鈕的邏輯
+                  // ...
+                },
+                child: const Text('月結'),
+              ),
             ),
           ],
         ),
@@ -180,7 +195,8 @@ class SeatCard extends StatelessWidget {
   final String seatNumber;
   final int capacity;
 
-  const SeatCard({super.key, required this.seatNumber, required this.capacity});
+  const SeatCard({Key? key, required this.seatNumber, required this.capacity})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

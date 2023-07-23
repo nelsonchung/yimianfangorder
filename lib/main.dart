@@ -42,11 +42,12 @@ class HomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const CustomerOrderScreen()),
+                        builder: (context) => const CustomerOrderScreen(),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(204, 194, 255, 183),
+                    backgroundColor: const Color(0xCCFCFCFC), // 更改顧客模式按钮颜色
                     minimumSize: const Size(320, 128),
                   ),
                   child: const Text(
@@ -65,11 +66,12 @@ class HomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const BossModeScreen()),
+                        builder: (context) => const BossModeScreen(),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(204, 194, 255, 183),
+                    backgroundColor: const Color(0xCCFCFCFC), // 更改老板模式按钮颜色
                     minimumSize: const Size(320, 128),
                   ),
                   child: const Text(
