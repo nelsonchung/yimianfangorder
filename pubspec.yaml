@@ -63,6 +63,28 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
+  # Nelson Added
+  assets:
+    - assets/奶油培根.jpeg
+    - assets/奶油海鮮.jpeg
+    - assets/奶油燻雞.jpeg
+    - assets/奶油蛤蠣.jpeg
+    - assets/蕃茄海鮮.jpeg
+    - assets/青醬德腸.jpeg
+    - assets/青醬海鮮.jpeg
+    - assets/青醬雞肉.jpeg
+    - assets/西西里肉醬.jpeg
+    - assets/青醬梅花豬.jpeg
+    - assets/泰式香辣德腸.jpeg
+    - assets/泰式香辣海鮮.jpeg
+    - assets/泰式香辣蛤蠣.jpeg
+    - assets/泰式香辣雞肉.jpeg
+    - assets/蒜香白酒蛤蠣.jpeg
+    - assets/蒜香辣味海鮮.jpeg
+    - assets/蒜香辣味雞肉.jpeg
+    - assets/辣味番茄雞肉.jpeg
+
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
