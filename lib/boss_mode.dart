@@ -71,6 +71,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('老闆模式'),
+          backgroundColor: const Color(0xFF61B378),
           bottom: const TabBar(
             tabs: [
               Tab(text: '菜單'),
@@ -140,6 +141,9 @@ class _BossModeScreenState extends State<BossModeScreen> {
                       // 結帳按鈕的邏輯
                       // ...
                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(182, 30, 144, 10),
+                    ),
                     child: const Text('結帳'),
                   ),
                 ],
