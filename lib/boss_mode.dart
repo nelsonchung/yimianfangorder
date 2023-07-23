@@ -4,6 +4,7 @@ class BossModeScreen extends StatefulWidget {
   const BossModeScreen({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _BossModeScreenState createState() => _BossModeScreenState();
 }
 
@@ -166,6 +167,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
             ),
           ],
         ),
+        backgroundColor: const Color(0xFF61B37B),
       ),
     );
   }
