@@ -83,6 +83,8 @@ flutter:
     - assets/蒜香辣味海鮮.jpeg
     - assets/蒜香辣味雞肉.jpeg
     - assets/辣味番茄雞肉.jpeg
+    - assets/background.png
+    - assets/main_dish.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
