@@ -69,7 +69,7 @@ flutter:
     - assets/奶油海鮮.jpeg
     - assets/奶油燻雞.jpeg
     - assets/奶油蛤蠣.jpeg
-    - assets/蕃茄海鮮.jpeg
+    - assets/紅茄海鮮.jpeg
     - assets/青醬德腸.jpeg
     - assets/青醬海鮮.jpeg
     - assets/青醬雞肉.jpeg
@@ -83,6 +83,22 @@ flutter:
     - assets/蒜香辣味海鮮.jpeg
     - assets/蒜香辣味雞肉.jpeg
     - assets/辣味番茄雞肉.jpeg
+    - assets/焗烤青醬海鮮.jpeg
+    - assets/焗烤奶油海鮮.jpeg
+    - assets/焗烤紅茄海鮮.jpeg
+    - assets/焗烤南瓜培根.jpeg
+    - assets/焗烤奶油燻雞.jpeg
+    - assets/焗烤紅茄肉醬.jpeg
+    - assets/香濃起司海陸分享鍋.jpeg
+    - assets/香濃起司肉多多分享鍋.jpeg
+    - assets/香濃南瓜海鮮.jpeg
+    - assets/香濃南瓜雞肉.jpeg
+    - assets/印泰雙降海鮮.jpeg
+    - assets/印度咖哩肉醬.jpeg
+    - assets/南瓜田園錦蔬.jpeg
+    - assets/印度咖哩錦蔬.jpeg
+    - assets/奶油田園錦蔬.jpeg
+    - assets/default.jpeg
     - assets/background.png
     - assets/main_dish.png
 

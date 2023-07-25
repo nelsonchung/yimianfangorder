@@ -19,6 +19,14 @@ class _BossModeScreenState extends State<BossModeScreen> {
       ],
     ),
     MenuCategory(
+      title: '蕃茄紅醬系列',
+      items: [
+        MenuItem(name: '辣味番茄雞肉', imagePath: 'assets/辣味番茄雞肉.jpeg'),
+        MenuItem(name: '西西里肉醬', imagePath: 'assets/西西里肉醬.jpeg'),
+        MenuItem(name: '紅茄海鮮', imagePath: 'assets/紅茄海鮮.jpeg'),
+      ],
+    ),
+    MenuCategory(
       title: '奶油白醬系列',
       items: [
         MenuItem(name: '奶油培根', imagePath: 'assets/奶油培根.jpeg'),
@@ -31,17 +39,8 @@ class _BossModeScreenState extends State<BossModeScreen> {
       title: '青醬系列',
       items: [
         MenuItem(name: '青醬梅花豬', imagePath: 'assets/青醬梅花豬.jpeg'),
-        MenuItem(name: '青醬雞肉', imagePath: 'assets/青醬雞肉.jpeg'),
         MenuItem(name: '青醬德腸', imagePath: 'assets/青醬德腸.jpeg'),
         MenuItem(name: '青醬海鮮', imagePath: 'assets/青醬海鮮.jpeg'),
-      ],
-    ),
-    MenuCategory(
-      title: '蕃茄紅醬系列',
-      items: [
-        MenuItem(name: '辣味番茄雞肉', imagePath: 'assets/辣味番茄雞肉.jpeg'),
-        MenuItem(name: '西西里肉醬', imagePath: 'assets/西西里肉醬.jpeg'),
-        MenuItem(name: '蕃茄海鮮', imagePath: 'assets/蕃茄海鮮.jpeg'),
       ],
     ),
     MenuCategory(
@@ -51,6 +50,44 @@ class _BossModeScreenState extends State<BossModeScreen> {
         MenuItem(name: '泰式香辣德腸', imagePath: 'assets/泰式香辣德腸.jpeg'),
         MenuItem(name: '泰式香辣蛤蠣', imagePath: 'assets/泰式香辣蛤蠣.jpeg'),
         MenuItem(name: '泰式香辣海鮮', imagePath: 'assets/泰式香辣海鮮.jpeg'),
+      ],
+    ),
+    MenuCategory(
+      title: '素食系列',
+      items: [
+        MenuItem(name: '奶油田園錦蔬', imagePath: 'assets/奶油田園錦蔬.jpeg'),
+        MenuItem(name: '印度咖哩錦蔬', imagePath: 'assets/印度咖哩錦蔬.jpeg'),
+        MenuItem(name: '南瓜田園錦蔬', imagePath: 'assets/南瓜田園錦蔬.jpeg'),
+      ],
+    ),
+    MenuCategory(
+      title: '隱藏菜單',
+      items: [
+        MenuItem(name: '印度咖哩肉醬', imagePath: 'assets/印度咖哩肉醬.jpeg'),
+        MenuItem(name: '印泰雙降海鮮', imagePath: 'assets/印泰雙降海鮮.jpeg'),
+        MenuItem(name: '香濃南瓜雞肉', imagePath: 'assets/香濃南瓜雞肉.jpeg'),
+        MenuItem(name: '香濃南瓜海鮮', imagePath: 'assets/香濃南瓜海鮮.jpeg'),
+      ],
+    ),
+    MenuCategory(
+      title: '香濃起司分享系列(可兩人分享)',
+      items: [
+        MenuItem(
+            name: '香濃起司肉多多分享鍋(雞肉/德腸/培根/起司)',
+            imagePath: 'assets/香濃起司肉多多分享鍋.jpeg'),
+        MenuItem(
+            name: '香濃起司海陸分享鍋(雞肉/德腸/培根/起司)', imagePath: 'assets/香濃起司海陸分享鍋.jpeg'),
+      ],
+    ),
+    MenuCategory(
+      title: '焗烤系列',
+      items: [
+        MenuItem(name: '焗烤紅茄肉醬', imagePath: 'assets/焗烤紅茄肉醬.jpeg'),
+        MenuItem(name: '焗烤奶油燻雞', imagePath: 'assets/焗烤奶油燻雞.jpeg'),
+        MenuItem(name: '焗烤南瓜培根', imagePath: 'assets/焗烤南瓜培根.jpeg'),
+        MenuItem(name: '焗烤紅茄海鮮', imagePath: 'assets/焗烤紅茄海鮮.jpeg'),
+        MenuItem(name: '焗烤奶油海鮮', imagePath: 'assets/焗烤奶油海鮮.jpeg'),
+        MenuItem(name: '焗烤青醬海鮮', imagePath: 'assets/焗烤奶油海鮮.jpeg'),
       ],
     ),
   ];
@@ -117,15 +154,94 @@ class _BossModeScreenState extends State<BossModeScreen> {
                             const SizedBox(height: 8),
                             Column(
                               children: menuCategories[index].items.map((item) {
-                                return SwitchListTile(
-                                  title: Text(item.name),
-                                  value: selectedMenu[item.name] ?? false,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedMenu[item.name] = value;
-                                    });
-                                  },
-                                  secondary: Image.asset(item.imagePath),
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        // 圖片
+                                        Image.asset(
+                                          item.imagePath,
+                                          width: 80,
+                                          height: 80,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        const SizedBox(width: 16),
+                                        // 菜色名字
+                                        Text(
+                                          item.name,
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        // 設計三個checkbox，名稱為 直麵，管麵，燉飯
+                                        Checkbox(
+                                          value: false, // 替換成相應的值
+                                          onChanged: (value) {
+                                            // checkbox的邏輯
+                                            // ...
+                                          },
+                                        ),
+                                        const Text('直麵'),
+                                        Checkbox(
+                                          value: false, // 替換成相應的值
+                                          onChanged: (value) {
+                                            // checkbox的邏輯
+                                            // ...
+                                          },
+                                        ),
+                                        const Text('管麵'),
+                                        Checkbox(
+                                          value: false, // 替換成相應的值
+                                          onChanged: (value) {
+                                            // checkbox的邏輯
+                                            // ...
+                                          },
+                                        ),
+                                        const Text('燉飯'),
+                                        const Spacer(),
+                                        // 減號 icon
+                                        IconButton(
+                                          onPressed: () {
+                                            // 減號按鈕的邏輯
+                                            setState(() {
+                                              if (item.quantity > 0) {
+                                                item.quantity--;
+                                              }
+                                            });
+                                          },
+                                          icon: const Icon(Icons.remove),
+                                        ),
+                                        // 數字
+                                        Text('${item.quantity}'),
+                                        // 加號 icon
+                                        IconButton(
+                                          onPressed: () {
+                                            // 加號按鈕的邏輯
+                                            setState(() {
+                                              if (item.quantity < 99) {
+                                                item.quantity++;
+                                              }
+                                            });
+                                          },
+                                          icon: const Icon(Icons.add),
+                                        ),
+                                      ],
+                                    ),
+                                    // 備註欄位
+                                    TextFormField(
+                                      decoration: const InputDecoration(
+                                        hintText: '備註',
+                                      ),
+                                      onChanged: (value) {
+                                        // 備註欄位的邏輯
+                                        // ...
+                                      },
+                                    ),
+                                    const SizedBox(height: 16),
+                                  ],
                                 );
                               }).toList(),
                             ),
@@ -135,16 +251,16 @@ class _BossModeScreenState extends State<BossModeScreen> {
                       },
                     ),
                   ),
-                  // 結帳按鈕
+                  // 點餐確認按鈕
                   ElevatedButton(
                     onPressed: () {
-                      // 結帳按鈕的邏輯
+                      // 點餐確認按鈕的邏輯
                       // ...
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(182, 30, 144, 10),
+                      backgroundColor: const Color.fromARGB(182, 30, 144, 10),
                     ),
-                    child: const Text('結帳'),
+                    child: const Text('點餐確認，送出'),
                   ),
                 ],
               ),
@@ -171,7 +287,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
             ),
           ],
         ),
-        backgroundColor: const Color(0xFF61B37B),
+        backgroundColor: const Color.fromARGB(255, 134, 187, 149),
       ),
     );
   }
@@ -190,10 +306,12 @@ class MenuCategory {
 class MenuItem {
   final String name;
   final String imagePath;
+  int quantity; // 菜單數量
 
   MenuItem({
     required this.name,
     required this.imagePath,
+    this.quantity = 0, // 預設數量為0
   });
 }
 
