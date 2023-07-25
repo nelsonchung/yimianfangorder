@@ -31,13 +31,14 @@ class HomeScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -48,20 +49,15 @@ class HomeScreen extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xCCFCFCFC), // 更改顧客模式按钮颜色
-                    minimumSize: const Size(320, 128),
+                    minimumSize: const Size(320, 88),
                   ),
                   child: const Text(
                     '顧客模式',
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
+                const SizedBox(height: 16),
+                ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -72,16 +68,16 @@ class HomeScreen extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xCCFCFCFC), // 更改老板模式按钮颜色
-                    minimumSize: const Size(320, 128),
+                    minimumSize: const Size(320, 88),
                   ),
                   child: const Text(
                     '老闆模式',
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
