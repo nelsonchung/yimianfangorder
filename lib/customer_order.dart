@@ -1,14 +1,45 @@
 import 'package:flutter/material.dart';
 
+class MenuCategory {
+  final String title;
+  final List<MenuItem> items;
+
+  MenuCategory({
+    required this.title,
+    required this.items,
+  });
+}
+
+class MenuItem {
+  final String name;
+  final String imagePath;
+  int quantity = 0; // 初始化數量為0
+  Map<String, bool> checkboxStates = {
+    '直麵': false,
+    '管麵': false,
+    '燉飯': false,
+  };
+
+  MenuItem({
+    required this.name,
+    required this.imagePath,
+    this.quantity = 0,
+  });
+}
+
 class CustomerOrderScreen extends StatefulWidget {
   const CustomerOrderScreen({Key? key}) : super(key: key);
+
 
   @override
   // ignore: library_private_types_in_public_api
   _CustomerOrderScreenState createState() => _CustomerOrderScreenState();
 }
 
+
+
 class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
+
   List<MenuCategory> menuCategories = [
     MenuCategory(
       title: '蒜香系列',
@@ -96,31 +127,32 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
     MenuCategory(
       title: '輕食/軟法沙拉盤',
       items: [
-        MenuItem(name: '田園沙拉佐柚子油醋醬', imagePath: 'assets/焗烤紅茄肉醬.jpeg'),
-        MenuItem(name: '焗肉醬軟法麵包', imagePath: 'assets/焗烤奶油燻雞.jpeg'),
-        MenuItem(name: '焗蕃茄肉醬軟法沙拉盤', imagePath: 'assets/焗烤南瓜培根.jpeg'),
+        MenuItem(name: '田園沙拉佐柚子油醋醬', imagePath: 'assets/田園沙拉佐柚子油醋醬.jpeg'),
+        MenuItem(name: '焗肉醬軟法麵包', imagePath: 'assets/焗肉醬軟法麵包.jpeg'),
+        MenuItem(name: '焗蕃茄肉醬軟法沙拉盤', imagePath: 'assets/焗蕃茄肉醬軟法沙拉盤.jpeg'),
       ],
     ),
     MenuCategory(
       title: '升級套餐',
       items: [
-        MenuItem(name: '主廚濃湯 + 蒜香軟法', imagePath: 'assets/焗烤紅茄肉醬.jpeg'),
-        MenuItem(name: '主廚濃湯 + 蒜香軟法 + 飲料', imagePath: 'assets/焗烤奶油燻雞.jpeg'),
+        MenuItem(name: '主廚濃湯 + 蒜香軟法', imagePath: 'assets/主廚濃湯_蒜香軟法.jpeg'),
+        MenuItem(name: '主廚濃湯 + 蒜香軟法 + 飲料', imagePath: 'assets/主廚濃湯_蒜香軟法_飲料.jpeg'),
       ],
     ),
     MenuCategory(
       title: '單點/飲料',
       items: [
-        MenuItem(name: '主廚濃湯', imagePath: 'assets/焗烤紅茄肉醬.jpeg'),
-        MenuItem(name: '蒜香軟法', imagePath: 'assets/焗烤奶油燻雞.jpeg'),
-        MenuItem(name: '紅茶(冰/熱)', imagePath: 'assets/焗烤南瓜培根.jpeg'),
-        MenuItem(name: '咖啡(冰/熱)', imagePath: 'assets/焗烤南瓜培根.jpeg'),
-        MenuItem(name: '柳橙汁', imagePath: 'assets/焗烤南瓜培根.jpeg'),
-        MenuItem(name: '可樂', imagePath: 'assets/焗烤南瓜培根.jpeg'),
-        MenuItem(name: '雪」、」、', imagePath: 'assets/焗烤南瓜培根.jpeg'),
+        MenuItem(name: '主廚濃湯', imagePath: 'assets/主廚濃湯.jpeg'),
+        MenuItem(name: '蒜香軟法', imagePath: 'assets/蒜香軟法.jpeg'),
+        MenuItem(name: '紅茶(冰/熱)', imagePath: 'assets/紅茶.jpeg'),
+        MenuItem(name: '咖啡(冰/熱)', imagePath: 'assets/咖啡.jpeg'),
+        MenuItem(name: '柳橙汁', imagePath: 'assets/柳橙汁.jpeg'),
+        MenuItem(name: '可樂', imagePath: 'assets/可樂.jpeg'),
+        MenuItem(name: '雪碧', imagePath: 'assets/雪碧.jpeg'),
       ],
     ),
-  ]
+  ];
+   
 
   // 用於顯示當前選擇的座位和菜單
   // ...
@@ -171,19 +203,29 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: menuCategories.length,
+                      itemCount: menuCategories.length + menuCategoriesMiscellaneous.length,
                       itemBuilder: (context, index) {
+                        MenuCategory currentCategory;
+                        bool isMiscellaneous = false;
+
+                        if (index < menuCategories.length) {
+                          currentCategory = menuCategories[index];
+                        } else {
+                          currentCategory = menuCategoriesMiscellaneous[index - menuCategories.length];
+                          isMiscellaneous = true;
+                        }
+
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              menuCategories[index].title,
+                              currentCategory.title,
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 8),
                             Column(
-                              children: menuCategories[index].items.map((item) {
+                              children: currentCategory.items.map((item) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -206,31 +248,38 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                                     ),
                                     Row(
                                       children: [
-                                        // 設計三個checkbox，名稱為 直麵，管麵，燉飯
-                                        Checkbox(
-                                          value: false, // 替換成相應的值
-                                          onChanged: (value) {
-                                            // checkbox的邏輯
-                                            // ...
-                                          },
-                                        ),
-                                        const Text('直麵'),
-                                        Checkbox(
-                                          value: false, // 替換成相應的值
-                                          onChanged: (value) {
-                                            // checkbox的邏輯
-                                            // ...
-                                          },
-                                        ),
-                                        const Text('管麵'),
-                                        Checkbox(
-                                          value: false, // 替換成相應的值
-                                          onChanged: (value) {
-                                            // checkbox的邏輯
-                                            // ...
-                                          },
-                                        ),
-                                        const Text('燉飯'),
+                                        if (!isMiscellaneous) ...[
+                                          Checkbox(
+                                            value: item.checkboxStates['直麵'], // 使用Map來獲取選擇狀態
+                                            onChanged: (value) {
+                                              // 修改選擇狀態並更新UI
+                                              setState(() {
+                                                item.checkboxStates['直麵'] = value ?? false;
+                                              });
+                                            },
+                                          ),
+                                          const Text('直麵'),
+                                          Checkbox(
+                                            value: item.checkboxStates['管麵'], // 使用Map來獲取選擇狀態
+                                            onChanged: (value) {
+                                              // 修改選擇狀態並更新UI
+                                              setState(() {
+                                                item.checkboxStates['管麵'] = value ?? false;
+                                              });
+                                            },
+                                          ),
+                                          const Text('管麵'),
+                                          Checkbox(
+                                            value: item.checkboxStates['燉飯'], // 使用Map來獲取選擇狀態
+                                            onChanged: (value) {
+                                              // 修改選擇狀態並更新UI
+                                              setState(() {
+                                                item.checkboxStates['燉飯'] = value ?? false;
+                                              });
+                                            },
+                                          ),
+                                          const Text('燉飯'),
+                                        ],
                                         const Spacer(),
                                         // 減號 icon
                                         IconButton(
@@ -323,27 +372,6 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
   }
 }
 
-class MenuCategory {
-  final String title;
-  final List<MenuItem> items;
-
-  MenuCategory({
-    required this.title,
-    required this.items,
-  });
-}
-
-class MenuItem {
-  final String name;
-  final String imagePath;
-  int quantity; // 菜單數量
-
-  MenuItem({
-    required this.name,
-    required this.imagePath,
-    this.quantity = 0, // 預設數量為0
-  });
-}
 
 class SeatCard extends StatelessWidget {
   final String seatNumber;
