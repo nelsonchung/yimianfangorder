@@ -1,10 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-class BossModeScreen extends StatelessWidget {
-  const BossModeScreen({super.key});
+class BossModeScreen extends StatefulWidget {
+  const BossModeScreen({Key? key}) : super(key: key);
 
-  // 當前選擇的菜單
-  //Map<String, bool> selectedMenu = {}; // 使用Map記錄菜單的選擇狀態
+  @override
+  _BossModeScreenState createState() => _BossModeScreenState();
+}
+
+class _BossModeScreenState extends State<BossModeScreen> {
+  List<Map<String, dynamic>> orderedItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadOrderedItems();
+  }
+
+  Future<void> loadOrderedItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? orderedItemsJson = prefs.getString('orderedItems');
+    if (orderedItemsJson != null) {
+      setState(() {
+        orderedItems = List<Map<String, dynamic>>.from(jsonDecode(orderedItemsJson));
+      });
+    }
+    //print debug message
+    print('讀取的點餐資訊: $orderedItemsJson');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +36,7 @@ class BossModeScreen extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('顧客模式'),
+          title: const Text('老闆模式'),
           backgroundColor: const Color(0xFF61B378),
           bottom: const TabBar(
             tabs: [
@@ -24,8 +48,30 @@ class BossModeScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            // 第一個Tab頁面，顯示菜單
-            Center(
+            // 第一個Tab頁面，顯示顧客點的菜單
+            ListView.builder(
+              itemCount: orderedItems.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> orderedItem = orderedItems[index];
+                return ListTile(
+                  title: Text(orderedItem['name']),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('數量: ${orderedItem['quantity']}'),
+                      Text('訂餐時間: ${orderedItem['orderTime']}'), // 顯示訂餐時間
+                    ],
+                  ),
+                  trailing: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: orderedItem['selectedOptions'].entries
+                        .where((entry) => entry.value == true) // 只顯示 "是" 的餐點
+                        .map<Widget>((entry) {
+                          return Text('${entry.key}: 是');
+                        }).toList(),
+                  ),
+                );
+              },
             ),
             // 第二個Tab頁面，顯示日結功能
             Center(
@@ -53,4 +99,10 @@ class BossModeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: BossModeScreen(),
+  ));
 }

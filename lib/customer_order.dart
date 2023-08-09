@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert'; // for jsonEncode
 
 class MenuCategory {
   final String title;
@@ -19,6 +21,7 @@ class MenuItem {
     '管麵': false,
     '燉飯': false,
   };
+  DateTime? orderTime; // 新增這一行
 
   MenuItem({
     required this.name,
@@ -39,6 +42,7 @@ class CustomerOrderScreen extends StatefulWidget {
 
 
 class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
+  List<Map<String, dynamic>> orderedItems = []; //記錄點餐資訊
 
   List<MenuCategory> menuCategories = [
     MenuCategory(
@@ -166,7 +170,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 1,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('顧客模式'),
@@ -215,13 +219,17 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                           isMiscellaneous = true;
                         }
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              currentCategory.title,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                        return Container(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentCategory.title,
+                                style: const TextStyle(
+                                  fontSize: 16, 
+                                  fontWeight: FontWeight.bold
+                                ),
                             ),
                             const SizedBox(height: 8),
                             Column(
@@ -326,15 +334,64 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                             ),
                             const SizedBox(height: 16),
                           ],
+                          ),
                         );
                       },
                     ),
                   ),
                   // 點餐確認按鈕
                   ElevatedButton(
-                    onPressed: () {
-                      // 點餐確認按鈕的邏輯
-                      // ...
+                    onPressed: () async {
+                      DateTime now = DateTime.now(); // 獲取當前時間
+                      // 將點餐資料存儲到 orderedItems 中
+                      List<Map<String, dynamic>> orderedItemsData = [];
+                      for (MenuCategory category in menuCategories) {
+                        for (MenuItem item in category.items) {
+                          if (item.quantity > 0) {
+                            item.orderTime = now; // 設置訂單時間
+                            Map<String, dynamic> orderedItem = {
+                              'name': item.name,
+                              'quantity': item.quantity,
+                              'selectedOptions': item.checkboxStates,
+                              'orderTime': item.orderTime?.toIso8601String(), // 將時間轉換為ISO 8601格式的字符串
+                            };
+                            orderedItemsData.add(orderedItem);
+                          }
+                        }
+                      }
+
+                      // 將 orderedItemsData 存儲到本地
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('orderedItems', jsonEncode(orderedItemsData));
+
+                      //print debug message
+                      print('點餐資訊已存儲: ${jsonEncode(orderedItemsData)}');
+                      
+                      // 重置點餐資料
+                      setState(() {
+                        for (MenuCategory category in menuCategories) {
+                          for (MenuItem item in category.items) {
+                            item.quantity = 0;
+                            item.checkboxStates = {
+                              '直麵': false,
+                              '管麵': false,
+                              '燉飯': false,
+                            };
+                          }
+                        }
+                      });
+
+                      // 顯示SnackBar
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('店家已收到你的訂餐資訊'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+
+                      // 返回到main.dart
+                      // 返回到 HomeScreen
+                      Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(182, 30, 144, 10),
@@ -344,6 +401,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                 ],
               ),
             ),
+            /*
             // 第二個Tab頁面，顯示日結功能
             Center(
               child: ElevatedButton(
@@ -363,7 +421,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                 },
                 child: const Text('月結'),
               ),
-            ),
+            ),*/
           ],
         ),
         backgroundColor: const Color.fromARGB(255, 134, 187, 149),
