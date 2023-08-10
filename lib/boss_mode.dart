@@ -40,7 +40,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
           backgroundColor: const Color(0xFF61B378),
           bottom: const TabBar(
             tabs: [
-              Tab(text: '菜單'),
+              Tab(text: '點餐資訊'),
               Tab(text: '日結'),
               Tab(text: '月結'),
             ],
@@ -48,7 +48,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
         ),
         body: TabBarView(
           children: [
-            // 第一個Tab頁面，顯示顧客點的菜單
+            // 第一個Tab頁面，顯示顧客點的點餐資訊
             ListView.builder(
               itemCount: orderedItems.length,
               itemBuilder: (context, index) {
