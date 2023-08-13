@@ -29,6 +29,7 @@ class BossModeScreen extends StatefulWidget {
 
 class _BossModeScreenState extends State<BossModeScreen> {
   List<Map<String, dynamic>> orderedItems = [];
+  late SharedPreferences prefs;
 
   @override
   void initState() {
@@ -37,15 +38,28 @@ class _BossModeScreenState extends State<BossModeScreen> {
   }
 
   Future<void> loadOrderedItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();  // 初始化 prefs
     String? orderedItemsJson = prefs.getString('orderedItems');
     if (orderedItemsJson != null) {
       setState(() {
         orderedItems = List<Map<String, dynamic>>.from(jsonDecode(orderedItemsJson));
       });
-    }
+    } else {
+      orderedItems = []; // 如果沒有任何資料，則初始化為空列表
+     }
+
     //print debug message
     print('讀取的點餐資訊: $orderedItemsJson');
+  }
+
+  double calculateTotalAmountForCustomer(String customernameid) {
+    double totalAmount = 0;
+    for (Map<String, dynamic> item in orderedItems) {
+      if (item['customernameid'] == customernameid) {
+        totalAmount += (item['price'] * item['quantity']);
+      }
+    }
+    return totalAmount;
   }
 
   @override
@@ -71,45 +85,117 @@ class _BossModeScreenState extends State<BossModeScreen> {
               itemCount: orderedItems.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> orderedItem = orderedItems[index];
-                return ListTile(
-                  title: Text(orderedItem['name']),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('數量: ${orderedItem['quantity']}'),
-                      Text('訂餐時間: ${orderedItem['orderTime']}'), // 顯示訂餐時間
-                    ],
-                  ),
-                  trailing: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: orderedItem['selectedOptions'].entries
-                        .where((entry) => entry.value == true) // 只顯示 "是" 的餐點
-                        .map<Widget>((entry) {
-                          return Text('${entry.key}: 是');
-                        }).toList(),
-                  ),
-                );
+                DateTime orderDateTime = DateTime.parse(orderedItem['orderTime']);
+                bool isToday = orderDateTime.year == DateTime.now().year &&
+                    orderDateTime.month == DateTime.now().month &&
+                    orderDateTime.day == DateTime.now().day;
+
+                return isToday
+                ? SingleChildScrollView(
+                  child: Column(
+                    //? Column(
+                        children: [
+                          ListTile(
+                            title: Text(orderedItem['name']),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(orderedItem['customernameid']),
+                                Text('數量: ${orderedItem['quantity']}'),
+                                Text('訂餐時間: ${orderedItem['orderTime']}'), // 顯示訂餐時間
+                                Text('價位: ${orderedItem['price']}'),
+                              ],
+                            ),
+                            trailing: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: orderedItem['selectedOptions'].entries
+                                  .where((entry) => entry.value == true)
+                                  .map<Widget>((entry) {
+                                    return Text('${entry.key}: 是');
+                                  }).toList(),
+                            ),
+                          ),
+                          if (index == orderedItems.length - 1)
+                            Text(
+                              '總金額：${calculateTotalAmountForCustomer(orderedItem['customernameid'])}',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                        ],
+                      ),
+                    )
+                    : SizedBox();
               },
             ),
             // 第二個Tab頁面，顯示日結功能
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // 日結按鈕的邏輯
-                  // ...
-                },
-                child: const Text('日結'),
-              ),
+            ListView.builder(
+              itemCount: orderedItems.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> orderedItem = orderedItems[index];
+                DateTime orderDateTime = DateTime.parse(orderedItem['orderTime']);
+
+                // 篩選符合日結條件的點餐資訊（年、月、日相符）
+                if (orderDateTime.year == DateTime.now().year &&
+                    orderDateTime.month == DateTime.now().month &&
+                    orderDateTime.day == DateTime.now().day) {
+                  return ListTile(
+                    title: Text(orderedItem['name']),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('數量: ${orderedItem['quantity']}'),
+                        Text('訂餐時間: ${orderedItem['orderTime']}'),
+                        Text('使用者名稱: ${orderedItem['customernameid']}'), // 顯示使用者名稱
+                        Text('價位: ${orderedItem['price']}'),
+                      ],
+                    ),
+                    trailing: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: orderedItem['selectedOptions'].entries
+                          .where((entry) => entry.value == true)
+                          .map<Widget>((entry) {
+                            return Text('${entry.key}: 是');
+                          }).toList(),
+                    ),
+                  );
+                } else {
+                  return Container(); // 不顯示不符合日結條件的點餐資訊
+                }
+              },
             ),
             // 第三個Tab頁面，顯示月結功能
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // 月結按鈕的邏輯
-                  // ...
-                },
-                child: const Text('月結'),
-              ),
+            ListView.builder(
+              itemCount: orderedItems.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> orderedItem = orderedItems[index];
+                DateTime orderDateTime = DateTime.parse(orderedItem['orderTime']);
+
+                // 篩選符合日結條件的點餐資訊（年、月相符）
+                if (orderDateTime.year == DateTime.now().year &&
+                    orderDateTime.month == DateTime.now().month) {
+                  return ListTile(
+                    title: Text(orderedItem['name']),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('數量: ${orderedItem['quantity']}'),
+                        Text('訂餐時間: ${orderedItem['orderTime']}'),
+                        Text('使用者名稱: ${orderedItem['customernameid']}'), // 顯示使用者名稱
+                        Text('價位: ${orderedItem['price']}'),
+                      ],
+                    ),
+                    trailing: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: orderedItem['selectedOptions'].entries
+                          .where((entry) => entry.value == true)
+                          .map<Widget>((entry) {
+                            return Text('${entry.key}: 是');
+                          }).toList(),
+                    ),
+                  );
+                } else {
+                  return Container(); // 不顯示不符合日結條件的點餐資訊
+                }
+              },
             ),
           ],
         ),

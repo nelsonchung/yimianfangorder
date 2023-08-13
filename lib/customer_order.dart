@@ -19,6 +19,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert'; // for jsonEncode
+import 'dart:math'; 
 
 class MenuCategory {
   final String title;
@@ -33,6 +34,7 @@ class MenuCategory {
 class MenuItem {
   final String name;
   final String imagePath;
+  int price = 0;
   int quantity = 0; // 初始化數量為0
   Map<String, bool> checkboxStates = {
     '直麵': false,
@@ -45,6 +47,7 @@ class MenuItem {
     required this.name,
     required this.imagePath,
     this.quantity = 0,
+    this.price = 0,
   });
 }
 
@@ -60,66 +63,66 @@ class CustomerOrderScreen extends StatefulWidget {
 
 
 class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
-  List<Map<String, dynamic>> orderedItems = []; //記錄點餐資訊
+  List<Map<String, dynamic>> orderedItems = []; // 儲存所有點餐資訊的列表
 
   List<MenuCategory> menuCategories = [
     MenuCategory(
       title: '蒜香系列',
       items: [
-        MenuItem(name: '蒜香辣味雞肉', imagePath: 'assets/蒜香辣味雞肉.jpeg'),
-        MenuItem(name: '蒜香白酒蛤蠣', imagePath: 'assets/蒜香白酒蛤蠣.jpeg'),
-        MenuItem(name: '蒜香辣味海鮮', imagePath: 'assets/蒜香辣味海鮮.jpeg'),
+        MenuItem(name: '蒜香辣味雞肉', price: 180, imagePath: 'assets/蒜香辣味雞肉.jpeg'),
+        MenuItem(name: '蒜香白酒蛤蠣', price: 190, imagePath: 'assets/蒜香白酒蛤蠣.jpeg'),
+        MenuItem(name: '蒜香辣味海鮮', price: 200, imagePath: 'assets/蒜香辣味海鮮.jpeg'),
       ],
     ),
     MenuCategory(
       title: '蕃茄紅醬系列',
       items: [
-        MenuItem(name: '辣味番茄雞肉', imagePath: 'assets/辣味番茄雞肉.jpeg'),
-        MenuItem(name: '西西里肉醬', imagePath: 'assets/西西里肉醬.jpeg'),
-        MenuItem(name: '紅茄海鮮', imagePath: 'assets/紅茄海鮮.jpeg'),
+        MenuItem(name: '辣味番茄雞肉', price: 180, imagePath: 'assets/辣味番茄雞肉.jpeg'),
+        MenuItem(name: '西西里肉醬', price: 190, imagePath: 'assets/西西里肉醬.jpeg'),
+        MenuItem(name: '紅茄海鮮', price: 200, imagePath: 'assets/紅茄海鮮.jpeg'),
       ],
     ),
     MenuCategory(
       title: '奶油白醬系列',
       items: [
-        MenuItem(name: '奶油培根', imagePath: 'assets/奶油培根.jpeg'),
-        MenuItem(name: '奶油燻雞', imagePath: 'assets/奶油燻雞.jpeg'),
-        MenuItem(name: '奶油蛤蠣', imagePath: 'assets/奶油蛤蠣.jpeg'),
-        MenuItem(name: '奶油海鮮', imagePath: 'assets/奶油海鮮.jpeg'),
+        MenuItem(name: '奶油培根', price: 180, imagePath: 'assets/奶油培根.jpeg'),
+        MenuItem(name: '奶油燻雞', price: 180, imagePath: 'assets/奶油燻雞.jpeg'),
+        MenuItem(name: '奶油蛤蠣', price: 190, imagePath: 'assets/奶油蛤蠣.jpeg'),
+        MenuItem(name: '奶油海鮮', price: 200, imagePath: 'assets/奶油海鮮.jpeg'),
       ],
     ),
     MenuCategory(
       title: '青醬系列',
       items: [
-        MenuItem(name: '青醬梅花豬', imagePath: 'assets/青醬梅花豬.jpeg'),
-        MenuItem(name: '青醬德腸', imagePath: 'assets/青醬德腸.jpeg'),
-        MenuItem(name: '青醬海鮮', imagePath: 'assets/青醬海鮮.jpeg'),
+        MenuItem(name: '青醬梅花豬', price: 180, imagePath: 'assets/青醬梅花豬.jpeg'),
+        MenuItem(name: '青醬德腸', price: 180, imagePath: 'assets/青醬德腸.jpeg'),
+        MenuItem(name: '青醬海鮮', price: 200, imagePath: 'assets/青醬海鮮.jpeg'),
       ],
     ),
     MenuCategory(
       title: '泰式香辣系列',
       items: [
-        MenuItem(name: '泰式香辣雞肉', imagePath: 'assets/泰式香辣雞肉.jpeg'),
-        MenuItem(name: '泰式香辣德腸', imagePath: 'assets/泰式香辣德腸.jpeg'),
-        MenuItem(name: '泰式香辣蛤蠣', imagePath: 'assets/泰式香辣蛤蠣.jpeg'),
-        MenuItem(name: '泰式香辣海鮮', imagePath: 'assets/泰式香辣海鮮.jpeg'),
+        MenuItem(name: '泰式香辣雞肉', price: 180, imagePath: 'assets/泰式香辣雞肉.jpeg'),
+        MenuItem(name: '泰式香辣德腸', price: 180, imagePath: 'assets/泰式香辣德腸.jpeg'),
+        MenuItem(name: '泰式香辣蛤蠣', price: 190, imagePath: 'assets/泰式香辣蛤蠣.jpeg'),
+        MenuItem(name: '泰式香辣海鮮', price: 200, imagePath: 'assets/泰式香辣海鮮.jpeg'),
       ],
     ),
     MenuCategory(
       title: '素食系列',
       items: [
-        MenuItem(name: '奶油田園錦蔬', imagePath: 'assets/奶油田園錦蔬.jpeg'),
-        MenuItem(name: '印度咖哩錦蔬', imagePath: 'assets/印度咖哩錦蔬.jpeg'),
-        MenuItem(name: '南瓜田園錦蔬', imagePath: 'assets/南瓜田園錦蔬.jpeg'),
+        MenuItem(name: '奶油田園錦蔬', price: 180, imagePath: 'assets/奶油田園錦蔬.jpeg'),
+        MenuItem(name: '印度咖哩錦蔬', price: 180, imagePath: 'assets/印度咖哩錦蔬.jpeg'),
+        MenuItem(name: '南瓜田園錦蔬', price: 200, imagePath: 'assets/南瓜田園錦蔬.jpeg'),
       ],
     ),
     MenuCategory(
       title: '隱藏菜單',
       items: [
-        MenuItem(name: '印度咖哩肉醬', imagePath: 'assets/印度咖哩肉醬.jpeg'),
-        MenuItem(name: '印泰雙降海鮮', imagePath: 'assets/印泰雙降海鮮.jpeg'),
-        MenuItem(name: '香濃南瓜雞肉', imagePath: 'assets/香濃南瓜雞肉.jpeg'),
-        MenuItem(name: '香濃南瓜海鮮', imagePath: 'assets/香濃南瓜海鮮.jpeg'),
+        MenuItem(name: '印度咖哩肉醬', price: 180, imagePath: 'assets/印度咖哩肉醬.jpeg'),
+        MenuItem(name: '印泰雙降海鮮', price: 220, imagePath: 'assets/印泰雙降海鮮.jpeg'),
+        MenuItem(name: '香濃南瓜雞肉', price: 200, imagePath: 'assets/香濃南瓜雞肉.jpeg'),
+        MenuItem(name: '香濃南瓜海鮮', price: 220, imagePath: 'assets/香濃南瓜海鮮.jpeg'),
       ],
     ),
     MenuCategory(
@@ -127,20 +130,23 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
       items: [
         MenuItem(
             name: '香濃起司肉多多分享鍋(雞肉/德腸/培根/起司)',
+            price: 380,
             imagePath: 'assets/香濃起司肉多多分享鍋.jpeg'),
         MenuItem(
-            name: '香濃起司海陸分享鍋(雞肉/德腸/培根/起司)', imagePath: 'assets/香濃起司海陸分享鍋.jpeg'),
+            name: '香濃起司海陸分享鍋(雞肉/德腸/培根/起司)', 
+            price: 430,
+            imagePath: 'assets/香濃起司海陸分享鍋.jpeg'),
       ],
     ),
     MenuCategory(
       title: '焗烤系列',
       items: [
-        MenuItem(name: '焗烤紅茄肉醬', imagePath: 'assets/焗烤紅茄肉醬.jpeg'),
-        MenuItem(name: '焗烤奶油燻雞', imagePath: 'assets/焗烤奶油燻雞.jpeg'),
-        MenuItem(name: '焗烤南瓜培根', imagePath: 'assets/焗烤南瓜培根.jpeg'),
-        MenuItem(name: '焗烤紅茄海鮮', imagePath: 'assets/焗烤紅茄海鮮.jpeg'),
-        MenuItem(name: '焗烤奶油海鮮', imagePath: 'assets/焗烤奶油海鮮.jpeg'),
-        MenuItem(name: '焗烤青醬海鮮', imagePath: 'assets/焗烤奶油海鮮.jpeg'),
+        MenuItem(name: '焗烤紅茄肉醬', price: 240, imagePath: 'assets/焗烤紅茄肉醬.jpeg'),
+        MenuItem(name: '焗烤奶油燻雞', price: 240, imagePath: 'assets/焗烤奶油燻雞.jpeg'),
+        MenuItem(name: '焗烤南瓜培根', price: 250, imagePath: 'assets/焗烤南瓜培根.jpeg'),
+        MenuItem(name: '焗烤紅茄海鮮', price: 260, imagePath: 'assets/焗烤紅茄海鮮.jpeg'),
+        MenuItem(name: '焗烤奶油海鮮', price: 260, imagePath: 'assets/焗烤奶油海鮮.jpeg'),
+        MenuItem(name: '焗烤青醬海鮮', price: 260, imagePath: 'assets/焗烤奶油海鮮.jpeg'),
       ],
     ),
   ];
@@ -184,6 +190,13 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
 
   // 當前選擇的菜單
   Map<String, bool> selectedMenu = {}; // 使用Map記錄菜單的選擇狀態
+
+  String generateRandomUserId() {
+  // 產生一個8位數的隨機數字作為使用者名稱
+    final random = Random();
+    int userId = random.nextInt(100000000); // 產生0到99999999之間的隨機數字
+    return userId.toString().padLeft(8, '0'); // 補足到8位數，不足的部分補0
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -265,9 +278,15 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                                           fit: BoxFit.cover,
                                         ),
                                         const SizedBox(width: 16),
-                                        // 菜色名字
+                                        // 餐點名稱
                                         Text(
                                           item.name,
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        // 價錢
+                                        Text(
+                                          '\$${item.price.toString()}',
                                           style: const TextStyle(fontSize: 18),
                                         ),
                                       ],
@@ -361,6 +380,10 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                   ElevatedButton(
                     onPressed: () async {
                       DateTime now = DateTime.now(); // 獲取當前時間
+                      
+                      // 產生隨機的使用者名稱 (customernameid)
+                      String customernameid = generateRandomUserId();
+
                       // 將點餐資料存儲到 orderedItems 中
                       List<Map<String, dynamic>> orderedItemsData = [];
                       for (MenuCategory category in menuCategories) {
@@ -372,7 +395,10 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                               'quantity': item.quantity,
                               'selectedOptions': item.checkboxStates,
                               'orderTime': item.orderTime?.toIso8601String(), // 將時間轉換為ISO 8601格式的字符串
+                              'customernameid': customernameid, // 將使用者名稱新增到點餐資料
+                              'price': item.price, //價錢
                             };
+                            orderedItems.add(orderedItem); // 將新的點餐資訊添加到 orderedItems 列表中
                             orderedItemsData.add(orderedItem);
                           }
                         }
