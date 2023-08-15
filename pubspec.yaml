@@ -37,6 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_launcher_icons: ^0.13.1
   shared_preferences: ^2.2.0
+  sqflite: ^2.3.0
+  path_provider: ^2.1.0
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
@@ -103,6 +106,18 @@ flutter:
     - assets/default.jpeg
     - assets/background.png
     - assets/main_dish.png
+    - assets/主廚濃湯_蒜香軟法_飲料.jpeg
+    - assets/主廚濃湯_蒜香軟法.jpeg
+    - assets/田園沙拉佐柚子油醋醬.jpeg
+    - assets/焗肉醬軟法麵包.jpeg
+    - assets/焗蕃茄肉醬軟法沙拉盤.jpeg
+    - assets/主廚濃湯.jpeg
+    - assets/可樂.jpeg
+    - assets/雪碧.jpeg
+    - assets/紅茶.jpeg
+    - assets/咖啡.jpeg
+    - assets/柳橙汁.jpeg
+    - assets/蒜香軟法.jpeg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -17,9 +17,68 @@
  */
  
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert'; // for jsonEncode
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:math'; 
+import 'dart:io';
+import 'dart:convert'; // 導入json解碼器
+
+
+class DatabaseHelper {
+  static final _dbName = 'orders.db';
+  static final _dbVersion = 1;
+  static final _tableName = 'orders';
+
+  static final columnId = '_id';
+  static final columnName = 'name';
+  static final columnQuantity = 'quantity';
+  static final columnOptions = 'selectedOptions';
+  static final columnTime = 'orderTime';
+  static final columnUserId = 'customernameid';
+  static final columnPrice = 'price';
+
+  // 使此類為單例
+  DatabaseHelper._privateConstructor();
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+
+  static Database? _database;
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
+    _initDatabase() async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, _dbName);
+    return await openDatabase(path,
+        version: _dbVersion, onCreate: _onCreate);
+  }
+
+  Future _onCreate(Database db, int version) async {
+    await db.execute('''
+          CREATE TABLE $_tableName (
+            $columnId INTEGER PRIMARY KEY,
+            $columnName TEXT NOT NULL,
+            $columnQuantity INTEGER NOT NULL,
+            $columnOptions TEXT NOT NULL,
+            $columnTime TEXT NOT NULL,
+            $columnUserId TEXT NOT NULL,
+            $columnPrice INTEGER NOT NULL
+          )
+          ''');
+  }
+
+  Future<int> insert(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    return await db.insert(_tableName, row);
+  }
+
+  Future<List<Map<String, dynamic>>> queryAllRows() async {
+    Database db = await instance.database;
+    return await db.query(_tableName);
+  }  
+}
 
 class MenuCategory {
   final String title;
@@ -63,7 +122,7 @@ class CustomerOrderScreen extends StatefulWidget {
 
 
 class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
-  List<Map<String, dynamic>> orderedItems = []; // 儲存所有點餐資訊的列表
+  //List<Map<String, dynamic>> orderedItems = []; // 儲存所有點餐資訊的列表
 
   List<MenuCategory> menuCategories = [
     MenuCategory(
@@ -393,24 +452,26 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                             Map<String, dynamic> orderedItem = {
                               'name': item.name,
                               'quantity': item.quantity,
-                              'selectedOptions': item.checkboxStates,
+                              'selectedOptions': jsonEncode(item.checkboxStates), // 將選擇狀態轉換為JSON字符串
                               'orderTime': item.orderTime?.toIso8601String(), // 將時間轉換為ISO 8601格式的字符串
                               'customernameid': customernameid, // 將使用者名稱新增到點餐資料
                               'price': item.price, //價錢
                             };
-                            orderedItems.add(orderedItem); // 將新的點餐資訊添加到 orderedItems 列表中
+                            //orderedItems.add(orderedItem); // 將新的點餐資訊添加到 orderedItems 列表中
                             orderedItemsData.add(orderedItem);
+
+                            print("訂單資訊：${orderedItem.toString()}");  // 列印出訂餐資訊
                           }
                         }
                       }
 
-                      // 將 orderedItemsData 存儲到本地
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('orderedItems', jsonEncode(orderedItemsData));
+                      DatabaseHelper helper = DatabaseHelper.instance;
 
-                      //print debug message
-                      print('點餐資訊已存儲: ${jsonEncode(orderedItemsData)}');
-                      
+                      for (var item in orderedItemsData) {
+                        int id = await helper.insert(item);
+                        print('inserted row id: $id');
+                      }
+
                       // 重置點餐資料
                       setState(() {
                         for (MenuCategory category in menuCategories) {
@@ -445,27 +506,6 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                 ],
               ),
             ),
-            /*
-            // 第二個Tab頁面，顯示日結功能
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // 日結按鈕的邏輯
-                  // ...
-                },
-                child: const Text('日結'),
-              ),
-            ),
-            // 第三個Tab頁面，顯示月結功能
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // 月結按鈕的邏輯
-                  // ...
-                },
-                child: const Text('月結'),
-              ),
-            ),*/
           ],
         ),
         backgroundColor: const Color.fromARGB(255, 134, 187, 149),

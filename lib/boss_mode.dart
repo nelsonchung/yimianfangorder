@@ -17,8 +17,13 @@
  */
  
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:path/path.dart';
+
 
 class BossModeScreen extends StatefulWidget {
   const BossModeScreen({Key? key}) : super(key: key);
@@ -28,30 +33,64 @@ class BossModeScreen extends StatefulWidget {
 }
 
 class _BossModeScreenState extends State<BossModeScreen> {
+  late Future<Database> _db; // 定義數據庫變數
   List<Map<String, dynamic>> orderedItems = [];
-  late SharedPreferences prefs;
+  //late SharedPreferences prefs;
 
   @override
   void initState() {
     super.initState();
-    loadOrderedItems();
+    _initDb().then((_) {
+      _loadOrders();
+    });
   }
 
-  Future<void> loadOrderedItems() async {
-    prefs = await SharedPreferences.getInstance();  // 初始化 prefs
-    String? orderedItemsJson = prefs.getString('orderedItems');
-    if (orderedItemsJson != null) {
-      setState(() {
-        orderedItems = List<Map<String, dynamic>>.from(jsonDecode(orderedItemsJson));
-      });
-    } else {
-      orderedItems = []; // 如果沒有任何資料，則初始化為空列表
-     }
-
-    //print debug message
-    print('讀取的點餐資訊: $orderedItemsJson');
+  Future<void> _initDb() async {
+    var getpath = await getDatabasesPath();
+    String dbpath = join(getpath, 'orders.db');
+    
+    _db = openDatabase(
+      dbpath,
+      version: 1,
+      onCreate: (Database db, int version) async {
+        await db.execute(
+          "CREATE TABLE orders (id INTEGER PRIMARY KEY, " +
+          "name TEXT, " +
+          "quantity INTEGER, " +
+          "selectedOptions TEXT, " +
+          "orderTime TEXT, " +
+          "customernameid TEXT, " +
+          "price INTEGER)",
+        );
+      },
+    );
   }
 
+Future<void> _loadOrders() async {
+  final db = await _db;
+  List<Map<String, dynamic>> orders = await db.query('orders');
+  orderedItems = orders.map((order) {
+    // Make a mutable copy of the order
+    Map<String, dynamic> mutableOrder = Map.from(order);
+    // Modify the mutable copy
+    mutableOrder['selectedOptions'] = jsonDecode(order['selectedOptions']);
+    return mutableOrder;
+  }).toList();
+  print('查詢到的訂單資訊: $orderedItems');
+  setState(() {});
+}
+
+
+/*
+  Future<void> _loadOrders() async {
+    final db = await _db; // 先解析 Future<Database>
+    orderedItems = await db.query('orders');
+    print('查詢到的訂單資訊: $orderedItems'); // 打印查詢結果
+    setState(() {}); // 觸發畫面更新
+  }
+*/
+
+/*
   double calculateTotalAmountForCustomer(String customernameid) {
     double totalAmount = 0;
     for (Map<String, dynamic> item in orderedItems) {
@@ -61,6 +100,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
     }
     return totalAmount;
   }
+*/
 
   @override
   Widget build(BuildContext context) {
@@ -90,39 +130,43 @@ class _BossModeScreenState extends State<BossModeScreen> {
                     orderDateTime.month == DateTime.now().month &&
                     orderDateTime.day == DateTime.now().day;
 
+                bool isNewCustomer = index == 0 || orderedItems[index]['customernameid'] != orderedItems[index - 1]['customernameid'];
+
                 return isToday
-                ? SingleChildScrollView(
-                  child: Column(
-                    //? Column(
-                        children: [
-                          ListTile(
-                            title: Text(orderedItem['name']),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(orderedItem['customernameid']),
-                                Text('數量: ${orderedItem['quantity']}'),
-                                Text('訂餐時間: ${orderedItem['orderTime']}'), // 顯示訂餐時間
-                                Text('價位: ${orderedItem['price']}'),
-                              ],
+                    ? SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            if (isNewCustomer && index != 0)
+                              Divider(
+                                thickness: 2,
+                                color: Colors.black,
+                              ),
+                            ListTile(
+                              title: Text(orderedItem['name']),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(orderedItem['customernameid']),
+                                  Text('數量: ${orderedItem['quantity']}'),
+                                  Text('訂餐時間: ${orderedItem['orderTime']}'), // 顯示訂餐時間
+                                  Text('價位: ',
+                                      style: TextStyle(fontWeight: FontWeight.bold)),
+                                  Text('${orderedItem['price']}',
+                                      style: TextStyle(fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                              trailing: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: orderedItem['selectedOptions'].entries
+                                    .where((entry) => entry.value == true)
+                                    .map<Widget>((entry) {
+                                  return Text('${entry.key}: 是');
+                                }).toList(),
+                              ),
                             ),
-                            trailing: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: orderedItem['selectedOptions'].entries
-                                  .where((entry) => entry.value == true)
-                                  .map<Widget>((entry) {
-                                    return Text('${entry.key}: 是');
-                                  }).toList(),
-                            ),
-                          ),
-                          if (index == orderedItems.length - 1)
-                            Text(
-                              '總金額：${calculateTotalAmountForCustomer(orderedItem['customernameid'])}',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                        ],
-                      ),
-                    )
+                          ],
+                        ),
+                      )
                     : SizedBox();
               },
             ),

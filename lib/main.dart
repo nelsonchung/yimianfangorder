@@ -19,6 +19,9 @@
 import 'package:flutter/material.dart';
 import 'customer_order.dart';
 import 'boss_mode.dart';
+import 'dart:io';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart'; // 新增這行導入
 
 void main() {
   runApp(const MyApp());
@@ -38,6 +41,29 @@ class MyApp extends StatelessWidget {
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  Future<void> deleteDatabaseFile(BuildContext context) async {
+    String documentsDirectory = await getDatabasesPath();
+    String dbPath = join(documentsDirectory, 'orders.db');
+    if (await File(dbPath).exists()) {
+      await File(dbPath).delete();
+      print('Database file deleted.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('資料庫已清除'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      print('Database file does not exist.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('資料庫不存在'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +92,7 @@ class HomeScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xCCFCFCFC), // 更改顧客模式按钮颜色
+                    backgroundColor: const Color(0xCCFCFCFC),
                     minimumSize: const Size(320, 88),
                   ),
                   child: const Text(
@@ -85,13 +111,23 @@ class HomeScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xCCFCFCFC), // 更改老板模式按钮颜色
+                    backgroundColor: const Color(0xCCFCFCFC),
                     minimumSize: const Size(320, 88),
                   ),
                   child: const Text(
                     '老闆模式',
                     style: TextStyle(color: Colors.black),
                   ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+                    await deleteDatabaseFile(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  child: const Text('清除資料庫'),
                 ),
               ],
             ),
