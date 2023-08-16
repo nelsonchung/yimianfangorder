@@ -17,7 +17,6 @@
  */
  
 import 'package:flutter/material.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -35,8 +34,7 @@ class BossModeScreen extends StatefulWidget {
 class _BossModeScreenState extends State<BossModeScreen> {
   late Future<Database> _db; // 定義數據庫變數
   List<Map<String, dynamic>> orderedItems = [];
-  //late SharedPreferences prefs;
-
+  
   @override
   void initState() {
     super.initState();
@@ -66,32 +64,21 @@ class _BossModeScreenState extends State<BossModeScreen> {
     );
   }
 
-Future<void> _loadOrders() async {
-  final db = await _db;
-  List<Map<String, dynamic>> orders = await db.query('orders');
-  orderedItems = orders.map((order) {
-    // Make a mutable copy of the order
-    Map<String, dynamic> mutableOrder = Map.from(order);
-    // Modify the mutable copy
-    mutableOrder['selectedOptions'] = jsonDecode(order['selectedOptions']);
-    return mutableOrder;
-  }).toList();
-  print('查詢到的訂單資訊: $orderedItems');
-  setState(() {});
-}
-
-
-/*
   Future<void> _loadOrders() async {
-    final db = await _db; // 先解析 Future<Database>
-    orderedItems = await db.query('orders');
-    print('查詢到的訂單資訊: $orderedItems'); // 打印查詢結果
-    setState(() {}); // 觸發畫面更新
+    final db = await _db;
+    List<Map<String, dynamic>> orders = await db.query('orders');
+    orderedItems = orders.map((order) {
+      // Make a mutable copy of the order
+      Map<String, dynamic> mutableOrder = Map.from(order);
+      // Modify the mutable copy
+      mutableOrder['selectedOptions'] = jsonDecode(order['selectedOptions']);
+      return mutableOrder;
+    }).toList();
+    print('查詢到的訂單資訊: $orderedItems');
+    setState(() {});
   }
-*/
 
-/*
-  double calculateTotalAmountForCustomer(String customernameid) {
+  double totalAmountForCustomer(String customernameid) {
     double totalAmount = 0;
     for (Map<String, dynamic> item in orderedItems) {
       if (item['customernameid'] == customernameid) {
@@ -100,7 +87,21 @@ Future<void> _loadOrders() async {
     }
     return totalAmount;
   }
-*/
+
+  double totalAmountForDay(DateTime day) {
+    double totalAmount = 0;
+    for (Map<String, dynamic> item in orderedItems) {
+      DateTime orderDateTime = DateTime.parse(item['orderTime']);
+      if (orderDateTime.year == day.year &&
+          orderDateTime.month == day.month &&
+          orderDateTime.day == day.day) {
+        totalAmount += (item['price'] * item['quantity']);
+      }
+    }
+    return totalAmount;
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -171,40 +172,82 @@ Future<void> _loadOrders() async {
               },
             ),
             // 第二個Tab頁面，顯示日結功能
-            ListView.builder(
-              itemCount: orderedItems.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> orderedItem = orderedItems[index];
-                DateTime orderDateTime = DateTime.parse(orderedItem['orderTime']);
+            Column(
+              children: [
+                Builder(
+                  builder: (BuildContext context) {
+                    double totalAmountForToday = totalAmountForDay(DateTime.now());
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        '今日總金額：$totalAmountForToday',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: orderedItems.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> orderedItem = orderedItems[index];
+                      DateTime orderDateTime = DateTime.parse(orderedItem['orderTime']);
+                      double totalAmount = totalAmountForCustomer(orderedItem['customernameid']);
 
-                // 篩選符合日結條件的點餐資訊（年、月、日相符）
-                if (orderDateTime.year == DateTime.now().year &&
-                    orderDateTime.month == DateTime.now().month &&
-                    orderDateTime.day == DateTime.now().day) {
-                  return ListTile(
-                    title: Text(orderedItem['name']),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('數量: ${orderedItem['quantity']}'),
-                        Text('訂餐時間: ${orderedItem['orderTime']}'),
-                        Text('使用者名稱: ${orderedItem['customernameid']}'), // 顯示使用者名稱
-                        Text('價位: ${orderedItem['price']}'),
-                      ],
+                      bool isNewCustomer = index == 0 || orderedItems[index]['customernameid'] != orderedItems[index - 1]['customernameid'];            
+                      
+                      // 篩選符合日結條件的點餐資訊（年、月、日相符）
+                      if (orderDateTime.year == DateTime.now().year &&
+                          orderDateTime.month == DateTime.now().month &&
+                          orderDateTime.day == DateTime.now().day) {
+                            // 顯示同一個customernameid的總金額
+                          // 只有當客戶的總金額尚未顯示時，才顯示該客戶的總金額
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  if (isNewCustomer && index != 0)
+                                    Divider(
+                                      thickness: 2,
+                                      color: Colors.black,
+                                    ),
+                                  if (isNewCustomer && index != 0)
+                                    //Text('總金額：$totalAmount'),
+                                    Text('總金額：$totalAmount',style: TextStyle(fontWeight: FontWeight.bold)),
+
+                                  ListTile(
+                                    title: Text(orderedItem['name']),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('數量: ${orderedItem['quantity']}'),
+                                        Text('訂餐時間: ${orderedItem['orderTime']}'),
+                                        Text('使用者名稱: ${orderedItem['customernameid']}'), // 顯示使用者名稱
+                                        Text('價位: ${orderedItem['price']}'),
+                                      ],
+                                    ),
+                                    trailing: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: orderedItem['selectedOptions'].entries
+                                        .where((entry) => entry.value == true)
+                                        .map<Widget>((entry) {
+                                          return Text('${entry.key}: 是');
+                                        }).toList(),
+                                    ),
+                                  ),
+                                  //Text('總金額：$totalAmount'),
+                                ],
+                              ),
+                            );
+                        } else {
+                          return Container(); // 不顯示不符合日結條件的點餐資訊
+                        }
+                      },
                     ),
-                    trailing: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: orderedItem['selectedOptions'].entries
-                          .where((entry) => entry.value == true)
-                          .map<Widget>((entry) {
-                            return Text('${entry.key}: 是');
-                          }).toList(),
-                    ),
-                  );
-                } else {
-                  return Container(); // 不顯示不符合日結條件的點餐資訊
-                }
-              },
+                  ),
+              ],
             ),
             // 第三個Tab頁面，顯示月結功能
             ListView.builder(
