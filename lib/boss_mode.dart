@@ -101,6 +101,13 @@ class _BossModeScreenState extends State<BossModeScreen> {
     return totalAmount;
   }
 
+  double totalAmountForMonth() {
+    double totalAmount = 0;
+    for (Map<String, dynamic> item in orderedItems) {
+      totalAmount += (item['price'] * item['quantity']);
+    }
+    return totalAmount;
+  }
   
 
   @override
@@ -250,39 +257,78 @@ class _BossModeScreenState extends State<BossModeScreen> {
               ],
             ),
             // 第三個Tab頁面，顯示月結功能
-            ListView.builder(
-              itemCount: orderedItems.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> orderedItem = orderedItems[index];
-                DateTime orderDateTime = DateTime.parse(orderedItem['orderTime']);
+            Column(
+              children: [
+                Builder(
+                  builder: (BuildContext context) {
+                    double totalamountformonth = totalAmountForMonth();
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        '本月總金額：${totalamountformonth.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: orderedItems.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> orderedItem = orderedItems[index];
+                      DateTime orderDateTime = DateTime.parse(orderedItem['orderTime']);
+                      double totalAmount = totalAmountForDay(orderDateTime);
 
-                // 篩選符合日結條件的點餐資訊（年、月相符）
-                if (orderDateTime.year == DateTime.now().year &&
-                    orderDateTime.month == DateTime.now().month) {
-                  return ListTile(
-                    title: Text(orderedItem['name']),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('數量: ${orderedItem['quantity']}'),
-                        Text('訂餐時間: ${orderedItem['orderTime']}'),
-                        Text('使用者名稱: ${orderedItem['customernameid']}'), // 顯示使用者名稱
-                        Text('價位: ${orderedItem['price']}'),
-                      ],
-                    ),
-                    trailing: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: orderedItem['selectedOptions'].entries
-                          .where((entry) => entry.value == true)
-                          .map<Widget>((entry) {
-                            return Text('${entry.key}: 是');
-                          }).toList(),
-                    ),
-                  );
-                } else {
-                  return Container(); // 不顯示不符合日結條件的點餐資訊
-                }
-              },
+                      bool isNewDay = index == 0 || DateTime.parse(orderedItems[index]['orderTime']).day != DateTime.parse(orderedItems[index - 1]['orderTime']).day;
+
+                      // 篩選符合月結條件的點餐資訊（年、月相符）
+                      if (orderDateTime.year == DateTime.now().year &&
+                          orderDateTime.month == DateTime.now().month) {
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              if (isNewDay && index != 0)
+                                Divider(
+                                  thickness: 2,
+                                  color: Colors.black,
+                                ),
+                              if (isNewDay || index == 0)
+                              //if (index == 0)
+                                Text('當天總金額：${totalAmount.toStringAsFixed(2)}',
+                                    style: TextStyle(fontWeight: FontWeight.bold)),
+                              ListTile(
+                                title: Text(orderedItem['name']),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('數量: ${orderedItem['quantity']}'),
+                                    Text('訂餐時間: ${orderedItem['orderTime']}'),
+                                    Text('使用者名稱: ${orderedItem['customernameid']}'),
+                                    Text('價位: ${orderedItem['price']}'),
+                                  ],
+                                ),
+                                trailing: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: orderedItem['selectedOptions'].entries
+                                      .where((entry) => entry.value == true)
+                                      .map<Widget>((entry) {
+                                        return Text('${entry.key}: 是');
+                                      }).toList(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),
