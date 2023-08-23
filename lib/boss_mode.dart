@@ -220,7 +220,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
                                       thickness: 2,
                                       color: Colors.black,
                                     ),
-                                  if (isNewCustomer && index != 0)
+                                  //if (isNewCustomer && index != 0)
                                     //Text('總金額：$totalAmount'),
                                     Text('總金額：$totalAmount',style: TextStyle(fontWeight: FontWeight.bold)),
 

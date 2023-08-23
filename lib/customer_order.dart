@@ -214,28 +214,28 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
     MenuCategory(
       title: '輕食/軟法沙拉盤',
       items: [
-        MenuItem(name: '田園沙拉佐柚子油醋醬', imagePath: 'assets/田園沙拉佐柚子油醋醬.jpeg'),
-        MenuItem(name: '焗肉醬軟法麵包', imagePath: 'assets/焗肉醬軟法麵包.jpeg'),
-        MenuItem(name: '焗蕃茄肉醬軟法沙拉盤', imagePath: 'assets/焗蕃茄肉醬軟法沙拉盤.jpeg'),
+        MenuItem(name: '田園沙拉佐柚子油醋醬', price: 80, imagePath: 'assets/田園沙拉佐柚子油醋醬.jpeg'),
+        MenuItem(name: '焗肉醬軟法麵包', price: 120, imagePath: 'assets/焗肉醬軟法麵包.jpeg'),
+        MenuItem(name: '焗蕃茄肉醬軟法沙拉盤', price: 280, imagePath: 'assets/焗蕃茄肉醬軟法沙拉盤.jpeg'),
       ],
     ),
     MenuCategory(
       title: '升級套餐',
       items: [
-        MenuItem(name: '主廚濃湯 + 蒜香軟法', imagePath: 'assets/主廚濃湯_蒜香軟法.jpeg'),
-        MenuItem(name: '主廚濃湯 + 蒜香軟法 + 飲料', imagePath: 'assets/主廚濃湯_蒜香軟法_飲料.jpeg'),
+        MenuItem(name: '主廚濃湯 + 蒜香軟法', price: 80, imagePath: 'assets/主廚濃湯_蒜香軟法.jpeg'),
+        MenuItem(name: '主廚濃湯 + 蒜香軟法 + 飲料', price: 130, imagePath: 'assets/主廚濃湯_蒜香軟法_飲料.jpeg'),
       ],
     ),
     MenuCategory(
       title: '單點/飲料',
       items: [
-        MenuItem(name: '主廚濃湯', imagePath: 'assets/主廚濃湯.jpeg'),
-        MenuItem(name: '蒜香軟法', imagePath: 'assets/蒜香軟法.jpeg'),
-        MenuItem(name: '紅茶(冰/熱)', imagePath: 'assets/紅茶.jpeg'),
-        MenuItem(name: '咖啡(冰/熱)', imagePath: 'assets/咖啡.jpeg'),
-        MenuItem(name: '柳橙汁', imagePath: 'assets/柳橙汁.jpeg'),
-        MenuItem(name: '可樂', imagePath: 'assets/可樂.jpeg'),
-        MenuItem(name: '雪碧', imagePath: 'assets/雪碧.jpeg'),
+        MenuItem(name: '主廚濃湯', price: 50, imagePath: 'assets/主廚濃湯.jpeg'),
+        MenuItem(name: '蒜香軟法', price: 50, imagePath: 'assets/蒜香軟法.jpeg'),
+        MenuItem(name: '紅茶(冰/熱)', price: 60, imagePath: 'assets/紅茶.jpeg'),
+        MenuItem(name: '咖啡(冰/熱)', price: 60, imagePath: 'assets/咖啡.jpeg'),
+        MenuItem(name: '柳橙汁', price: 50, imagePath: 'assets/柳橙汁.jpeg'),
+        MenuItem(name: '可樂', price: 50, imagePath: 'assets/可樂.jpeg'),
+        MenuItem(name: '雪碧', price: 50, imagePath: 'assets/雪碧.jpeg'),
       ],
     ),
   ];
