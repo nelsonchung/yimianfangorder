@@ -221,7 +221,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
                                       color: Colors.black,
                                     ),
                                   //if (isNewCustomer && index != 0)
-                                    //Text('總金額：$totalAmount'),
+                                  if (isNewCustomer || index == 0)
                                     Text('總金額：$totalAmount',style: TextStyle(fontWeight: FontWeight.bold)),
 
                                   ListTile(
