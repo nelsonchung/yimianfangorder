@@ -153,7 +153,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                   // 座位分配圖
                   const Text(
                     '座位分配圖',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   // ... (之前的座位卡片部分相同)
@@ -162,9 +162,9 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                   // 菜單
                   const Text(
                     '菜單',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  Expanded(
+                  Expanded(child: Scrollbar(
                     child: ListView.builder(
                       itemCount: menuCategories.length + menuCategoriesMiscellaneous.length,
                       itemBuilder: (context, index) {
@@ -186,7 +186,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                               Text(
                                 currentCategory.title,
                                 style: const TextStyle(
-                                  fontSize: 16, 
+                                  fontSize: 20, 
                                   fontWeight: FontWeight.bold
                                 ),
                             ),
@@ -209,13 +209,13 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                                         // 餐點名稱
                                         Text(
                                           item.name,
-                                          style: const TextStyle(fontSize: 18),
+                                          style: const TextStyle(fontSize: 22),
                                         ),
                                         const SizedBox(width: 16),
                                         // 價錢
                                         Text(
                                           '\$${item.price.toString()}',
-                                          style: const TextStyle(fontSize: 18),
+                                          style: const TextStyle(fontSize: 22),
                                         ),
                                       ],
                                     ),
@@ -302,7 +302,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                           ),
                         );
                       },
-                    ),
+                    )),
                   ),
                   // 點餐確認按鈕
                   ElevatedButton(

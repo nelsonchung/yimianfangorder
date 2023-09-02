@@ -154,13 +154,13 @@ class _BossModeScreenState extends State<BossModeScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(orderedItem['customernameid']),
-                                  Text('數量: ${orderedItem['quantity']}'),
-                                  Text('訂餐時間: ${orderedItem['orderTime']}'), // 顯示訂餐時間
+                                  Text(orderedItem['customernameid'], style: TextStyle(fontSize: 16)),
+                                  Text('數量: ${orderedItem['quantity']}', style: TextStyle(fontSize: 16)),
+                                  Text('訂餐時間: ${orderedItem['orderTime']}', style: TextStyle(fontSize: 16)), // 顯示訂餐時間
                                   Text('價位: ',
-                                      style: TextStyle(fontWeight: FontWeight.bold)),
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                   Text('${orderedItem['price']}',
-                                      style: TextStyle(fontWeight: FontWeight.bold)),
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                 ],
                               ),
                               trailing: Column(
@@ -168,7 +168,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
                                 children: orderedItem['selectedOptions'].entries
                                     .where((entry) => entry.value == true)
                                     .map<Widget>((entry) {
-                                  return Text('${entry.key}: 是');
+                                  return Text('${entry.key}: 是', style: TextStyle(fontSize: 16));
                                 }).toList(),
                               ),
                             ),
@@ -189,7 +189,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
                       child: Text(
                         '今日總金額：$totalAmountForToday',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -222,17 +222,17 @@ class _BossModeScreenState extends State<BossModeScreen> {
                                     ),
                                   //if (isNewCustomer && index != 0)
                                   if (isNewCustomer || index == 0)
-                                    Text('總金額：$totalAmount',style: TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('總金額：$totalAmount',style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
 
                                   ListTile(
                                     title: Text(orderedItem['name']),
                                     subtitle: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text('數量: ${orderedItem['quantity']}'),
-                                        Text('訂餐時間: ${orderedItem['orderTime']}'),
-                                        Text('使用者名稱: ${orderedItem['customernameid']}'), // 顯示使用者名稱
-                                        Text('價位: ${orderedItem['price']}'),
+                                        Text('數量: ${orderedItem['quantity']}',style: TextStyle(fontSize: 16)),
+                                        Text('訂餐時間: ${orderedItem['orderTime']}',style: TextStyle(fontSize: 16)),
+                                        Text('使用者名稱: ${orderedItem['customernameid']}',style: TextStyle(fontSize: 16)), // 顯示使用者名稱
+                                        Text('價位: ${orderedItem['price']}',style: TextStyle(fontSize: 16)),
                                       ],
                                     ),
                                     trailing: Column(
@@ -240,7 +240,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
                                       children: orderedItem['selectedOptions'].entries
                                         .where((entry) => entry.value == true)
                                         .map<Widget>((entry) {
-                                          return Text('${entry.key}: 是');
+                                          return Text('${entry.key}: 是', style: TextStyle(fontSize: 16));
                                         }).toList(),
                                     ),
                                   ),
@@ -267,7 +267,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
                       child: Text(
                         '本月總金額：${totalamountformonth.toStringAsFixed(2)}',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -298,16 +298,16 @@ class _BossModeScreenState extends State<BossModeScreen> {
                               if (isNewDay || index == 0)
                               //if (index == 0)
                                 Text('當天總金額：${totalAmount.toStringAsFixed(2)}',
-                                    style: TextStyle(fontWeight: FontWeight.bold)),
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                               ListTile(
                                 title: Text(orderedItem['name']),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('數量: ${orderedItem['quantity']}'),
-                                    Text('訂餐時間: ${orderedItem['orderTime']}'),
-                                    Text('使用者名稱: ${orderedItem['customernameid']}'),
-                                    Text('價位: ${orderedItem['price']}'),
+                                    Text('數量: ${orderedItem['quantity']}', style: TextStyle(fontSize: 16)),
+                                    Text('訂餐時間: ${orderedItem['orderTime']}', style: TextStyle(fontSize: 16)),
+                                    Text('使用者名稱: ${orderedItem['customernameid']}', style: TextStyle(fontSize: 16)),
+                                    Text('價位: ${orderedItem['price']}', style: TextStyle(fontSize: 16)),
                                   ],
                                 ),
                                 trailing: Column(
@@ -315,7 +315,7 @@ class _BossModeScreenState extends State<BossModeScreen> {
                                   children: orderedItem['selectedOptions'].entries
                                       .where((entry) => entry.value == true)
                                       .map<Widget>((entry) {
-                                        return Text('${entry.key}: 是');
+                                        return Text('${entry.key}: 是', style: TextStyle(fontSize: 16));
                                       }).toList(),
                                 ),
                               ),
